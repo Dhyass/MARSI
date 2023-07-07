@@ -47,21 +47,31 @@ void OnTick()
                  double StopLossPrice = (OrderType()==ORDER_TYPE_BUY)?
                                          OrderOpenPrice()-stoploss:
                                          OrderOpenPrice()+stoploss;
+                                         
+                 StopLossPrice = NormalizeDouble(StopLossPrice,(int)SymbolInfoInteger(OrderSymbol(),SYMBOL_DIGITS)); 
+                OrderModify(OrderTicket(),OrderOpenPrice(), StopLossPrice, OrderTakeProfit(), OrderExpiration(), clrYellowGreen);  
+                                       
+               }
+               
+               if(OrderMagicNumber()==0 && OrderTakeProfit()==0 &&(OrderType()==ORDER_TYPE_SELL ||OrderType()==ORDER_TYPE_BUY)){
+            // magic 0 = manual entry SL 0 means no set
+               if(OrderOpenTime()>checkTime){   // lets you override after 30 seconds
+                 double takeprofit= 2*Inpstoptloss*SymbolInfoDouble(OrderSymbol(),SYMBOL_POINT);
                  double takeprofitprice = (OrderType()==ORDER_TYPE_BUY)?
                                          OrderOpenPrice()+takeprofit:
                                          OrderOpenPrice()-takeprofit;
                  
-                StopLossPrice = NormalizeDouble(StopLossPrice,(int)SymbolInfoInteger(OrderSymbol(),SYMBOL_DIGITS)); 
-                OrderModify(OrderTicket(),OrderOpenPrice(), StopLossPrice, OrderTakeProfit(), OrderExpiration(), clrYellowGreen); 
-              /*  
+            
                 takeprofitprice = NormalizeDouble(takeprofitprice,(int)SymbolInfoInteger(OrderSymbol(),SYMBOL_DIGITS)); 
-                OrderModify(OrderTicket(),OrderOpenPrice(), takeprofitprice, OrderStopLoss(), OrderExpiration(), clrYellowGreen);  
-                */                           
+                OrderModify(OrderTicket(),OrderOpenPrice(), OrderStopLoss(), takeprofitprice,OrderExpiration(), clrYellowGreen);  
+                                       
                }
+               
             }
       
          }
       }   
+  }
   }
   
 //+------------------------------------------------------------------+
